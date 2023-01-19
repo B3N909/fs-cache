@@ -2,8 +2,8 @@ const fs = require("fs");
 const md5File = require("md5-file");
 const md5 = require("md5");
 const path = require("path");
-if(!fs.existsSync("./cache.json")) fs.writeFileSync("./cache.json", JSON.stringify({}));
-let cache = require("./cache.json");
+let cache = {};
+if(fs.existsSync("./cache.json")) JSON.parse(fs.readFileSync("./cache.json", "utf8"));
 
 
 const getPathHash = (path) => {
