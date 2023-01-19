@@ -1,0 +1,25 @@
+{
+  "name": "@savant/fs-cache",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/B3N909/fs-cache.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/B3N909/fs-cache/issues"
+  },
+  "homepage": "https://github.com/B3N909/fs-cache#readme",
+  "dependencies": {
+    "md5": "^2.3.0",
+    "md5-file": "^5.0.0"
+  }
+}
