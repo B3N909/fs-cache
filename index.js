@@ -3,7 +3,7 @@ const md5File = require("md5-file");
 const md5 = require("md5");
 const path = require("path");
 let cache = {};
-if(fs.existsSync("./cache.json")) JSON.parse(fs.readFileSync("./cache.json", "utf8"));
+if(fs.existsSync("./cache.json")) cache = JSON.parse(fs.readFileSync("./cache.json", "utf8"));
 
 
 const getPathHash = (path) => {
@@ -35,22 +35,40 @@ const getPathHash = (path) => {
 
 
 // returns boolean whether path has changed since the last time we looked at that path with the same id
-const hasChanged = (id, path) => {
+const hasChanged = (id, path, doLog) => {
+    const newHash = getPathHash(path);
+
+    const saveCache = () => {
+        if(!cache[id]) cache[id] = {};
+        cache[id][path] = newHash;
+        fs.writeFileSync("./cache.json", JSON.stringify(cache, null, 4));
+    }
+
+
     // Never cache'd before
-    if (!cache[id]) return true;
+    if (!cache[id]) {
+        if(doLog) console.log("ID Never cached before");
+        saveCache();
+        return true;
+    }
     
     const idCache = cache[id];
 
-    if(!idCache[path]) return true;
-
-    const lastHash = idCache[path];
-    const newHash = getPathHash(path);
-
-    if(lastHash !== newHash) {
-        cache[id][path] = newHash;
-        fs.writeFileSync(path.join("./cache.json"), JSON.stringify(cache));
+    if(!idCache[path]) {
+        if(doLog) console.log("Path never cached before under this ID");
+        saveCache();
         return true;
     }
+
+    const lastHash = idCache[path];
+
+    if(lastHash !== newHash) {
+        if(doLog) console.log("Hashes don't match", lastHash, newHash);
+        saveCache();
+        return true;
+    }
+
+    return false;
 }
 
 
