@@ -6,11 +6,13 @@ let cache = {};
 if(fs.existsSync("./cache.json")) cache = JSON.parse(fs.readFileSync("./cache.json", "utf8"));
 
 
-const getPathHash = (path) => {
+const getPathHash = (path, blacklist) => {
     // From a path to a folder, get the hash of all the files in that folder, and all the files in all the subfolders EXCEPT FOR ANYTHING IN OUR BLACKLIST
     // Once we have an array of all the hashes, hash all the hashes together and return that
 
-    const BLACKLIST = ["node_modules", "package-lock.json"];
+    if(!blacklist) blacklist = [];
+    if(!blacklist.includes("node_modules")) blacklist.push("node_modules");
+    if(!blacklist.includes("package-lock.json")) blacklist.push("package-lock.json");
 
     let hashes = [];
     const _hashPath = (path) => {
@@ -18,7 +20,7 @@ const getPathHash = (path) => {
         files.forEach(file => {
             const filePath = `${path}/${file}`;
             const stat = fs.statSync(filePath);
-            if(BLACKLIST.includes(file)) return;
+            if(blacklist.includes(file)) return;
             
             if(stat.isDirectory()) {
                 _hashPath(filePath);
@@ -35,8 +37,8 @@ const getPathHash = (path) => {
 
 
 // returns boolean whether path has changed since the last time we looked at that path with the same id
-const hasChanged = (id, path, doLog) => {
-    const newHash = getPathHash(path);
+const hasChanged = (id, path, blacklist, doLog) => {
+    const newHash = getPathHash(path, blacklist);
 
     const saveCache = () => {
         if(!cache[id]) cache[id] = {};
