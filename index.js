@@ -48,7 +48,7 @@ const hasChanged = (id, path) => {
 
     if(lastHash !== newHash) {
         cache[id][path] = newHash;
-        fs.writeFileSync(path.join(__dirname, "cache.json"), JSON.stringify(cache));
+        fs.writeFileSync(path.join("./cache.json"), JSON.stringify(cache));
         return true;
     }
 }
